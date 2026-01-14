@@ -1,0 +1,2325 @@
+﻿<Window x:Class="SchedulerApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Views="clr-namespace:SchedulerApp.Views"
+        Title="Scheduler Pro"
+        Width="1150"
+        Height="700"
+        WindowStartupLocation="CenterScreen"
+        MinWidth="1000"
+        MinHeight="600"
+        Background="#F5F6FA">
+
+    <Window.Resources>
+        <Style x:Key="ModernScrollBar" TargetType="ScrollBar">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid x:Name="GridRoot" Width="8">
+                            <Border x:Name="Border"
+                            Background="Transparent"
+                            CornerRadius="4"/>
+                            <Track x:Name="PART_Track" IsDirectionReversed="true">
+                                <Track.Thumb>
+                                    <Thumb x:Name="Thumb"
+                                   Background="#CBD5E1"
+                                   BorderBrush="Transparent"
+                                   BorderThickness="0">
+                                        <Thumb.Style>
+                                            <Style TargetType="Thumb">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Thumb">
+                                                            <Border x:Name="CornerBorder"
+                                                            Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="4"/>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#94A3B8"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsDragging" Value="True">
+                                                        <Setter Property="Background" Value="#64748B"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Thumb.Style>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Orientation" Value="Horizontal">
+                                <Setter Property="Width" Value="Auto"/>
+                                <Setter Property="Height" Value="8"/>
+                                <Setter TargetName="GridRoot" Property="Width" Value="Auto"/>
+                                <Setter TargetName="GridRoot" Property="Height" Value="8"/>
+                                <Setter TargetName="PART_Track" Property="IsDirectionReversed" Value="false"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ThinnerScrollBar" TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBar}">
+            <Setter Property="Width" Value="6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid x:Name="GridRoot" Width="6">
+                            <Border x:Name="Border"
+                            Background="Transparent"
+                            CornerRadius="3"/>
+                            <Track x:Name="PART_Track" IsDirectionReversed="true">
+                                <Track.Thumb>
+                                    <Thumb x:Name="Thumb"
+                                   Background="#CBD5E1"
+                                   BorderBrush="Transparent"
+                                   BorderThickness="0">
+                                        <Thumb.Style>
+                                            <Style TargetType="Thumb">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Thumb">
+                                                            <Border x:Name="CornerBorder"
+                                                            Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="3"/>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#94A3B8"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsDragging" Value="True">
+                                                        <Setter Property="Background" Value="#64748B"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Thumb.Style>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Orientation" Value="Horizontal">
+                                <Setter Property="Width" Value="Auto"/>
+                                <Setter Property="Height" Value="6"/>
+                                <Setter TargetName="GridRoot" Property="Width" Value="Auto"/>
+                                <Setter TargetName="GridRoot" Property="Height" Value="6"/>
+                                <Setter TargetName="PART_Track" Property="IsDirectionReversed" Value="false"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <DropShadowEffect x:Key="CardShadow"
+                      BlurRadius="16"
+                      ShadowDepth="2"
+                      Opacity="0.08"
+                      Color="#000000"/>
+
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Background" Value="#4F46E5"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="10">
+                            <ContentPresenter
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#6366F1"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#4338CA"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="24"/>
+            <Setter Property="Margin" Value="0,0,0,24"/>
+            <Setter Property="Effect" Value="{StaticResource CardShadow}"/>
+        </Style>
+
+        <Style x:Key="ModernComboBox" TargetType="ComboBox">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="toggleButton"
+                                      Focusable="False"
+                                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                      ClickMode="Press"
+                                      Background="Transparent"
+                                      BorderBrush="Transparent"
+                                      BorderThickness="0">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Border x:Name="border"
+                                                Grid.ColumnSpan="2"
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                BorderThickness="{Binding BorderThickness, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                CornerRadius="8">
+                                                <ContentPresenter Content="{Binding SelectionBoxItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                              VerticalAlignment="Center"
+                                                              Margin="{Binding Padding, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                                            </Border>
+
+                                            <Border Grid.Column="1"
+                                                Background="Transparent"
+                                                Width="40"
+                                                VerticalAlignment="Stretch">
+                                                <Viewbox Width="10" Height="6"
+                                                     VerticalAlignment="Center"
+                                                     HorizontalAlignment="Center">
+                                                    <Path x:Name="arrow"
+                                                      Data="M0,0 L4,4 8,0 Z"
+                                                      Fill="#6B7280"
+                                                      Stretch="Uniform">
+                                                        <Path.RenderTransform>
+                                                            <RotateTransform CenterX="4" CenterY="2"/>
+                                                        </Path.RenderTransform>
+                                                    </Path>
+                                                </Viewbox>
+                                            </Border>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="BorderBrush" Value="#4F46E5"/>
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="border" Property="BorderBrush" Value="#4F46E5"/>
+                                                <Setter TargetName="arrow" Property="Fill" Value="#4F46E5"/>
+                                                <Setter TargetName="arrow" Property="RenderTransform">
+                                                    <Setter.Value>
+                                                        <RotateTransform Angle="180" CenterX="4" CenterY="2"/>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+
+                            <Popup x:Name="PART_Popup"
+                               AllowsTransparency="True"
+                               Placement="Bottom"
+                               VerticalOffset="2"
+                               PopupAnimation="Slide"
+                               IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}">
+                                <Border x:Name="dropDownBorder"
+                                    Background="White"
+                                    BorderBrush="#E5E7EB"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Effect="{StaticResource CardShadow}"
+                                    MaxHeight="300"
+                                    MinWidth="{Binding ActualWidth, ElementName=toggleButton}">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                              HorizontalScrollBarVisibility="Disabled">
+                                        <ScrollViewer.Resources>
+                                            <Style TargetType="ScrollBar" BasedOn="{StaticResource ThinnerScrollBar}"/>
+                                        </ScrollViewer.Resources>
+                                        <ItemsPresenter/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernComboBoxItem" TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#F3F4F6"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#EEF2FF"/>
+                                <Setter Property="Foreground" Value="#4F46E5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SidebarButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="Padding" Value="16,12"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="8"
+                            Padding="{TemplateBinding Padding}">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#F3F4F6"/>
+                                <Setter Property="Foreground" Value="#111827"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ActiveSidebarButton" TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+            <Setter Property="Background" Value="#EEF2FF"/>
+            <Setter Property="Foreground" Value="#4F46E5"/>
+        </Style>
+
+        <Style x:Key="FileUploadBorder" TargetType="Border">
+            <Setter Property="Background" Value="#F8FAFC"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="32"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style x:Key="ScheduleCell" TargetType="Border">
+            <Setter Property="Background" Value="#F8FAFC"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style x:Key="SelectedScheduleCell" TargetType="Border">
+            <Setter Property="Background" Value="#D1FAE5"/>
+            <Setter Property="BorderBrush" Value="#10B981"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style x:Key="EmployeeCard" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.05"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RoundedTextBox" TargetType="TextBox">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="15,10,12,10"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="8">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                  VerticalAlignment="Stretch"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="InfoText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Margin" Value="0,4,0,0"/>
+        </Style>
+
+        <Style x:Key="WrappingToolTip" TargetType="ToolTip">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="MaxWidth" Value="300"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="2" Opacity="0.1"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToolTip">
+                        <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4"
+                        Padding="{TemplateBinding Padding}"
+                        Effect="{TemplateBinding Effect}">
+                            <TextBlock Text="{TemplateBinding Content}"
+                               FontSize="13"
+                               TextWrapping="Wrap"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TimeComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource ModernComboBox}">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Width" Value="120"/>
+        </Style>
+
+        <Style x:Key="SelectedDateStyle" TargetType="Border">
+            <Setter Property="Background" Value="#D1FAE5"/>
+            <Setter Property="BorderBrush" Value="#10B981"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="6,3"/>
+            <Setter Property="Margin" Value="0,0,4,4"/>
+        </Style>
+
+        <Style x:Key="CustomCalendarDayButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#F3F4F6"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#E5E7EB"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SelectedCustomCalendarDayButton" TargetType="Button" BasedOn="{StaticResource CustomCalendarDayButton}">
+            <Setter Property="Background" Value="#4F46E5"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style x:Key="TodayCustomCalendarDayButton" TargetType="Button" BasedOn="{StaticResource CustomCalendarDayButton}">
+            <Setter Property="BorderBrush" Value="#4F46E5"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+
+        <Style x:Key="SmallDeleteButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Background" Value="#EF4444"/>
+        </Style>
+
+        <Style x:Key="SmallEditButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Background" Value="#3B82F6"/>
+        </Style>
+
+        <Style x:Key="SmallAddButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Background" Value="#10B981"/>
+        </Style>
+
+        <Style x:Key="DataSourceBadge" TargetType="Border">
+            <Setter Property="Background" Value="#EEF2FF"/>
+            <Setter Property="BorderBrush" Value="#C7D2FE"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="6,2"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
+        </Style>
+
+        <Style x:Key="ScheduleItemCard" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.08"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PersonItem" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+
+        <Style x:Key="ModernCheckBox" TargetType="CheckBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border x:Name="checkBoxBorder"
+                                    Grid.Column="0"
+                                    Width="20"
+                                    Height="20"
+                                    Background="White"
+                                    BorderBrush="#D1D5DB"
+                                    BorderThickness="2"
+                                    CornerRadius="4"
+                                    Margin="0,0,8,0">
+                                <TextBlock x:Name="checkMark"
+                                           Text="✓"
+                                           FontSize="14"
+                                           FontWeight="Bold"
+                                           Foreground="White"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Visibility="Collapsed"/>
+                            </Border>
+
+                            <ContentPresenter Grid.Column="1"
+                                              VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="checkBoxBorder" Property="BorderBrush" Value="#4F46E5"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="checkBoxBorder" Property="Background" Value="#4F46E5"/>
+                                <Setter TargetName="checkBoxBorder" Property="BorderBrush" Value="#4F46E5"/>
+                                <Setter TargetName="checkMark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Background="White"
+                CornerRadius="0,24,24,0"
+                Effect="{StaticResource CardShadow}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Margin="20,28,20,32">
+                    <TextBlock Text="📅"
+                               FontSize="28"
+                               Margin="0,0,0,6"/>
+                    <TextBlock Text="Scheduler Pro"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="#111827"/>
+                    <TextBlock Text="Smart scheduling made easy"
+                               FontSize="11"
+                               Foreground="#6B7280"
+                               Margin="0,4,0,0"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Margin="12,0">
+                    <Button x:Name="SetupNavButton"
+                            Content="⚙️ Setup"
+                            Style="{StaticResource ActiveSidebarButton}"
+                            Click="Setup_Click"/>
+
+                    <Button x:Name="ManualScheduleNavButton"
+                            Content="👤 Manual Schedule"
+                            Style="{StaticResource SidebarButton}"
+                            Click="ManualSchedule_Click"/>
+
+                    <Button x:Name="ImportDataNavButton"
+                            Content="📥 Import Data"
+                            Style="{StaticResource SidebarButton}"
+                            Click="ImportData_Click"/>
+
+                    <Button x:Name="ViewAvailabilitiesNavButton"
+                            Content="📊 View Availabilities"
+                            Style="{StaticResource SidebarButton}"
+                            Click="ViewAvailabilities_Click"/>
+
+                    <Button x:Name="ScheduleNavButton"
+                            Content="📋 View Schedule"
+                            Style="{StaticResource SidebarButton}"
+                            Click="Schedule_Click"/>
+
+                    <Button x:Name="ExportNavButton"
+                            Content="📤 Export"
+                            Style="{StaticResource SidebarButton}"
+                            Click="ExportPage_Click"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Margin="20,0,20,28">
+                    <Button x:Name="AboutButton"
+                            Content="ℹ️ About"
+                            Style="{StaticResource SidebarButton}"
+                            Click="AboutButton_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Column="1" Margin="32,28,32,28">
+
+            <ScrollViewer x:Name="SetupPage"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <ScrollViewer.Resources>
+                    <Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBar}"/>
+                </ScrollViewer.Resources>
+                <StackPanel>
+
+                    <Button x:Name="SetupBackButton"
+                            Content="← Back"
+                            Style="{StaticResource ModernButton}"
+                            Background="#6B7280"
+                            HorizontalAlignment="Left"
+                            Width="100"
+                            Height="36"
+                            FontSize="13"
+                            Margin="0,0,0,20"
+                            Click="BackButton_Click"
+                            Visibility="Collapsed"/>
+
+                    <TextBlock Text="Schedule Setup"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               Foreground="#111827"
+                               Margin="0,0,0,28"/>
+
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+
+                            <TextBlock Text="General Settings"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,20"/>
+
+                            <StackPanel Margin="0,0,0,24">
+                                <TextBlock Text="Select Batch"
+                                           FontSize="14"
+                                           FontWeight="Medium"
+                                           Margin="0,0,0,6"/>
+                                <ComboBox x:Name="BatchComboBox"
+                                          Style="{StaticResource ModernComboBox}"
+                                          ItemContainerStyle="{StaticResource ModernComboBoxItem}"
+                                          Width="300"
+                                          SelectionChanged="BatchComboBox_SelectionChanged"/>
+                            </StackPanel>
+
+                            <StackPanel Margin="0,0,0,24">
+                                <TextBlock Text="Weekend Options"
+                                           FontSize="14"
+                                           FontWeight="Medium"
+                                           Margin="0,0,0,6"/>
+                                <CheckBox x:Name="IncludeWeekendsCheckBox"
+                                          Content="Include Saturday and Sunday in schedule"
+                                          Style="{StaticResource ModernCheckBox}"
+                                          IsChecked="False"/>
+                            </StackPanel>
+
+                            <UniformGrid Columns="2" Rows="2">
+                                <StackPanel Margin="0,0,16,16">
+                                    <TextBlock Text="Opening Time"
+                                               FontSize="14"
+                                               FontWeight="Medium"
+                                               Margin="0,0,0,6"/>
+                                    <ComboBox x:Name="OpeningTimeBox"
+                                              Style="{StaticResource ModernComboBox}"
+                                              ItemContainerStyle="{StaticResource ModernComboBoxItem}"/>
+                                </StackPanel>
+
+                                <StackPanel Margin="0,0,0,16">
+                                    <TextBlock Text="Closing Time"
+                                               FontSize="14"
+                                               FontWeight="Medium"
+                                               Margin="0,0,0,6"/>
+                                    <ComboBox x:Name="ClosingTimeBox"
+                                              Style="{StaticResource ModernComboBox}"
+                                              ItemContainerStyle="{StaticResource ModernComboBoxItem}"/>
+                                </StackPanel>
+
+                                <StackPanel Margin="0,16,16,0">
+                                    <TextBlock Text="Shift Length (hours)"
+                                               FontSize="14"
+                                               FontWeight="Medium"
+                                               Margin="0,0,0,6"/>
+                                    <ComboBox x:Name="ShiftLengthBox"
+                                              Style="{StaticResource ModernComboBox}"
+                                              ItemContainerStyle="{StaticResource ModernComboBoxItem}"/>
+                                </StackPanel>
+
+                                <StackPanel Margin="0,16,0,0">
+                                    <TextBlock Text="People per Shift"
+                                               FontSize="14"
+                                               FontWeight="Medium"
+                                               Margin="0,0,0,6"/>
+                                    <ComboBox x:Name="PeoplePerShiftBox"
+                                              Style="{StaticResource ModernComboBox}"
+                                              ItemContainerStyle="{StaticResource ModernComboBoxItem}"/>
+                                </StackPanel>
+                            </UniformGrid>
+
+                        </StackPanel>
+                    </Border>
+
+                    <Button Content="Generate Schedule"
+                            Width="220"
+                            Height="52"
+                            HorizontalAlignment="Right"
+                            FontSize="16"
+                            Style="{StaticResource ModernButton}"
+                            Click="Generate_Click"
+                            Margin="0,16,0,0"/>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <Grid x:Name="ManualSchedulePage" Visibility="Collapsed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer.Resources>
+                        <Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBar}"/>
+                    </ScrollViewer.Resources>
+                    <StackPanel>
+                        <Button x:Name="ManualBackButton"
+                                Content="← Back"
+                                Style="{StaticResource ModernButton}"
+                                Background="#6B7280"
+                                HorizontalAlignment="Left"
+                                Width="100"
+                                Height="36"
+                                FontSize="13"
+                                Margin="0,0,0,20"
+                                Click="BackButton_Click"
+                                Visibility="Collapsed"/>
+
+                        <Button x:Name="BackToDatesButton"
+                                Content="← Back to Dates"
+                                Style="{StaticResource ModernButton}"
+                                Background="#6B7280"
+                                HorizontalAlignment="Left"
+                                Width="140"
+                                Height="36"
+                                FontSize="13"
+                                Margin="0,0,0,20"
+                                Click="BackToDatesButton_Click"
+                                Visibility="Collapsed"/>
+
+                        <TextBlock Text="👤 Manual Schedule Entry"
+                                   FontSize="28"
+                                   FontWeight="Bold"
+                                   Foreground="#111827"
+                                   Margin="0,0,0,28"/>
+
+                        <Border x:Name="RangeSelectionCard" Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="Step 1: Define Schedule Grid"
+                                           FontSize="20"
+                                           FontWeight="SemiBold"
+                                           Margin="0,0,0,20"/>
+
+                                <Border Background="#F8FAFC"
+                                        CornerRadius="8"
+                                        Padding="16"
+                                        Margin="0,0,0,16">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                            <TextBlock Text="📅"
+                                                       FontSize="18"
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,8,0"/>
+                                            <TextBlock Text="Select Dates"
+                                                       FontSize="16"
+                                                       FontWeight="SemiBold"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+
+                                        <Border Background="#EEF2FF"
+                                                BorderBrush="#C7D2FE"
+                                                BorderThickness="1"
+                                                CornerRadius="8"
+                                                Padding="12"
+                                                Margin="0,0,0,12">
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                                    <TextBlock Text="💡"
+                                                               FontSize="16"
+                                                               VerticalAlignment="Center"
+                                                               Margin="0,0,8,0"/>
+                                                    <TextBlock Text="Grid Dimensions"
+                                                               FontSize="13"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="#4F46E5"/>
+                                                </StackPanel>
+                                                <TextBlock x:Name="GridHintText"
+                                                           Text="Each selected date will create a column in the schedule grid, and the time range will create the rows. You can select dates by: 1) Clicking individual dates, 2) Holding Ctrl while clicking to select multiple non-consecutive dates, or 3) Clicking and dragging to select a range of consecutive dates. Selected dates will be displayed below."
+                                                           FontSize="12"
+                                                           Foreground="#6366F1"
+                                                           TextWrapping="Wrap"
+                                                           Margin="0,4,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <Border Grid.Row="0"
+                                                    BorderBrush="#D1D5DB"
+                                                    BorderThickness="2"
+                                                    Background="White"
+                                                    CornerRadius="8"
+                                                    Padding="24"
+                                                    Height="400">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="*"/>
+                                                    </Grid.RowDefinitions>
+
+                                                    <Border Grid.Row="0"
+                                                            Background="#F8FAFC"
+                                                            CornerRadius="6,6,0,0"
+                                                            Padding="16"
+                                                            Margin="0,0,0,8">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <Button x:Name="PrevMonthButton"
+                                                                    Grid.Column="0"
+                                                                    Content="←"
+                                                                    Width="40"
+                                                                    Height="40"
+                                                                    FontSize="18"
+                                                                    FontWeight="Bold"
+                                                                    Background="Transparent"
+                                                                    BorderThickness="0"
+                                                                    Click="PrevMonthButton_Click"
+                                                                    Cursor="Hand"
+                                                                    Foreground="#4F46E5"/>
+
+                                                            <TextBlock x:Name="MonthYearDisplay"
+                                                                       Grid.Column="1"
+                                                                       Text="January 2024"
+                                                                       FontSize="18"
+                                                                       FontWeight="Bold"
+                                                                       Foreground="#1F2937"
+                                                                       HorizontalAlignment="Center"
+                                                                       VerticalAlignment="Center"/>
+
+                                                            <Button x:Name="NextMonthButton"
+                                                                    Grid.Column="2"
+                                                                    Content="→"
+                                                                    Width="40"
+                                                                    Height="40"
+                                                                    FontSize="18"
+                                                                    FontWeight="Bold"
+                                                                    Background="Transparent"
+                                                                    BorderThickness="0"
+                                                                    Click="NextMonthButton_Click"
+                                                                    Cursor="Hand"
+                                                                    Foreground="#4F46E5"/>
+                                                        </Grid>
+                                                    </Border>
+
+                                                    <Border Grid.Row="1"
+                                                            Background="White"
+                                                            CornerRadius="0,0,6,6"
+                                                            Padding="8">
+                                                        <Grid x:Name="CalendarGrid">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto"/>
+                                                                <RowDefinition Height="*"/>
+                                                            </Grid.RowDefinitions>
+
+                                                            <UniformGrid Grid.Row="0" Columns="7" Rows="1" Margin="0,0,0,12">
+                                                                <TextBlock Text="Sun" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#6B7280" Margin="2"/>
+                                                                <TextBlock Text="Mon" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#6B7280" Margin="2"/>
+                                                                <TextBlock Text="Tue" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#6B7280" Margin="2"/>
+                                                                <TextBlock Text="Wed" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#6B7280" Margin="2"/>
+                                                                <TextBlock Text="Thu" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#6B7280" Margin="2"/>
+                                                                <TextBlock Text="Fri" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#6B7280" Margin="2"/>
+                                                                <TextBlock Text="Sat" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#6B7280" Margin="2"/>
+                                                            </UniformGrid>
+
+                                                            <UniformGrid x:Name="DaysGrid"
+                                                                         Grid.Row="1"
+                                                                         Columns="7"
+                                                                         Rows="6"
+                                                                         Margin="0"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </Grid>
+                                            </Border>
+
+                                            <StackPanel Grid.Row="1" Margin="0,16,0,0">
+                                                <TextBlock Text="Selected Dates:"
+                                                           FontSize="13"
+                                                           FontWeight="Medium"
+                                                           Margin="0,0,0,8"/>
+
+                                                <Border Background="#F3F4F6"
+                                                        CornerRadius="6"
+                                                        Padding="12"
+                                                        MinHeight="60">
+                                                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                                                  HorizontalScrollBarVisibility="Disabled"
+                                                                  MaxHeight="100">
+                                                        <ScrollViewer.Resources>
+                                                            <Style TargetType="ScrollBar" BasedOn="{StaticResource ThinnerScrollBar}"/>
+                                                        </ScrollViewer.Resources>
+                                                        <WrapPanel x:Name="SelectedDatesPanel">
+                                                            <TextBlock Text="No dates selected"
+                                                                       FontSize="12"
+                                                                       Foreground="#9CA3AF"
+                                                                       FontStyle="Italic"/>
+                                                        </WrapPanel>
+                                                    </ScrollViewer>
+                                                </Border>
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Background="#F8FAFC"
+                                        CornerRadius="8"
+                                        Padding="16">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                            <TextBlock Text="⏰"
+                                                       FontSize="18"
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,8,0"/>
+                                            <TextBlock Text="Select Time Range"
+                                                       FontSize="16"
+                                                       FontWeight="SemiBold"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                                <TextBlock Text="From"
+                                                           FontSize="13"
+                                                           FontWeight="Medium"
+                                                           Margin="0,0,0,4"/>
+                                                <ComboBox x:Name="StartTimeBox"
+                                                          Style="{StaticResource TimeComboBoxStyle}"
+                                                          ItemContainerStyle="{StaticResource ModernComboBoxItem}"
+                                                          SelectedIndex="0">
+                                                    <ComboBoxItem Content="6:00 AM"/>
+                                                    <ComboBoxItem Content="7:00 AM"/>
+                                                    <ComboBoxItem Content="8:00 AM"/>
+                                                    <ComboBoxItem Content="9:00 AM"/>
+                                                    <ComboBoxItem Content="10:00 AM"/>
+                                                    <ComboBoxItem Content="11:00 AM"/>
+                                                    <ComboBoxItem Content="12:00 PM"/>
+                                                    <ComboBoxItem Content="1:00 PM"/>
+                                                    <ComboBoxItem Content="2:00 PM"/>
+                                                    <ComboBoxItem Content="3:00 PM"/>
+                                                    <ComboBoxItem Content="4:00 PM"/>
+                                                    <ComboBoxItem Content="5:00 PM"/>
+                                                    <ComboBoxItem Content="6:00 PM"/>
+                                                    <ComboBoxItem Content="7:00 PM"/>
+                                                    <ComboBoxItem Content="8:00 PM"/>
+                                                    <ComboBoxItem Content="9:00 PM"/>
+                                                    <ComboBoxItem Content="10:00 PM"/>
+                                                    <ComboBoxItem Content="11:00 PM"/>
+                                                    <ComboBoxItem Content="12:00 AM"/>
+                                                </ComboBox>
+                                            </StackPanel>
+
+                                            <TextBlock Grid.Column="1"
+                                                       Text="→"
+                                                       FontSize="18"
+                                                       VerticalAlignment="Center"
+                                                       HorizontalAlignment="Center"
+                                                       Margin="0,8,0,0"
+                                                       Foreground="#9CA3AF"/>
+
+                                            <StackPanel Grid.Column="2" Margin="12,0,0,0">
+                                                <TextBlock Text="To"
+                                                           FontSize="13"
+                                                           FontWeight="Medium"
+                                                           Margin="0,0,0,4"/>
+                                                <ComboBox x:Name="EndTimeBox"
+                                                          Style="{StaticResource TimeComboBoxStyle}"
+                                                          ItemContainerStyle="{StaticResource ModernComboBoxItem}"
+                                                          SelectedIndex="11">
+                                                    <ComboBoxItem Content="7:00 AM"/>
+                                                    <ComboBoxItem Content="8:00 AM"/>
+                                                    <ComboBoxItem Content="9:00 AM"/>
+                                                    <ComboBoxItem Content="10:00 AM"/>
+                                                    <ComboBoxItem Content="11:00 AM"/>
+                                                    <ComboBoxItem Content="12:00 PM"/>
+                                                    <ComboBoxItem Content="1:00 PM"/>
+                                                    <ComboBoxItem Content="2:00 PM"/>
+                                                    <ComboBoxItem Content="3:00 PM"/>
+                                                    <ComboBoxItem Content="4:00 PM"/>
+                                                    <ComboBoxItem Content="5:00 PM"/>
+                                                    <ComboBoxItem Content="6:00 PM"/>
+                                                    <ComboBoxItem Content="7:00 PM"/>
+                                                    <ComboBoxItem Content="8:00 PM"/>
+                                                    <ComboBoxItem Content="9:00 PM"/>
+                                                    <ComboBoxItem Content="10:00 PM"/>
+                                                    <ComboBoxItem Content="11:00 PM"/>
+                                                    <ComboBoxItem Content="12:00 AM"/>
+                                                    <ComboBoxItem Content="1:00 AM"/>
+                                                </ComboBox>
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <Button x:Name="CreateGridButton"
+                                        Content="Create Schedule Grid"
+                                        Width="200"
+                                        Height="44"
+                                        Style="{StaticResource ModernButton}"
+                                        FontSize="14"
+                                        HorizontalAlignment="Right"
+                                        Margin="0,20,0,0"
+                                        Click="CreateGridButton_Click"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border x:Name="ScheduleGridCard"
+                                Style="{StaticResource Card}"
+                                Visibility="Collapsed">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,0,20">
+                                    <TextBlock Text="📅 Availability Grid"
+                                               FontSize="20"
+                                               FontWeight="SemiBold"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="CurrentEmployeeText"
+                                               Text="for: New Employee"
+                                               FontSize="16"
+                                               Foreground="#6B7280"
+                                               VerticalAlignment="Center"
+                                               Margin="12,0,0,0"/>
+                                </StackPanel>
+
+                                <Border Background="#F8FAFC"
+                                        CornerRadius="8"
+                                        Padding="16"
+                                        Margin="0,0,0,16">
+                                    <StackPanel>
+                                        <TextBlock Text="Employee Name"
+                                                   FontSize="14"
+                                                   FontWeight="Medium"
+                                                   Margin="0,0,0,6"/>
+                                        <Grid>
+                                            <TextBox x:Name="EmployeeNameBox"
+                                                     Style="{StaticResource RoundedTextBox}"
+                                                     ToolTip="Enter the full name of the employee"/>
+                                            <TextBlock Text="Enter employee name"
+                                                       IsHitTestVisible="False"
+                                                       FontSize="14"
+                                                       Foreground="#9CA3AF"
+                                                       Margin="18,0,0,0"
+                                                       VerticalAlignment="Center">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Text, ElementName=EmployeeNameBox}" Value="">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Text, ElementName=EmployeeNameBox}" Value="{x:Null}">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <TextBlock Text="Click or click and drag to select available times"
+                                           FontSize="14"
+                                           Foreground="#6B7280"
+                                           Margin="0,0,0,16"/>
+
+                                <Border BorderBrush="#E5E7EB"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Padding="1"
+                                        Background="White">
+                                    <ScrollViewer x:Name="GridScrollViewer"
+                                                  HorizontalScrollBarVisibility="Auto"
+                                                  VerticalScrollBarVisibility="Auto"
+                                                  MaxHeight="500">
+                                        <ScrollViewer.Resources>
+                                            <Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBar}"/>
+                                        </ScrollViewer.Resources>
+                                        <Grid x:Name="ScheduleGrid" Margin="0">
+                                        </Grid>
+                                    </ScrollViewer>
+                                </Border>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,16,0,0">
+                                    <Button x:Name="SaveAvailabilityButton"
+                                            Content="Save Availability"
+                                            Width="180"
+                                            Height="40"
+                                            Style="{StaticResource ModernButton}"
+                                            FontSize="14"
+                                            Click="SaveAvailability_Click"/>
+
+                                    <Button Content="Clear Selection"
+                                            Width="140"
+                                            Height="40"
+                                            Style="{StaticResource ModernButton}"
+                                            FontSize="14"
+                                            Background="#6B7280"
+                                            Click="ClearSelection_Click"
+                                            Margin="12,0,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                                    <TextBlock Text="👥 Manually Entered Availabilities"
+                                               FontSize="20"
+                                               FontWeight="SemiBold"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Text="(Will be combined with imported data)"
+                                               FontSize="13"
+                                               Foreground="#6B7280"
+                                               VerticalAlignment="Center"
+                                               Margin="12,0,0,0"/>
+                                </StackPanel>
+
+                                <ItemsControl x:Name="EmployeesList">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource EmployeeCard}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Name}"
+                                                                       FontSize="16"
+                                                                       FontWeight="SemiBold"
+                                                                       Margin="0,0,8,0"/>
+                                                            <Border Style="{StaticResource DataSourceBadge}">
+                                                                <TextBlock Text="Manual"
+                                                                           FontSize="11"
+                                                                           FontWeight="Medium"
+                                                                           Foreground="#4F46E5"/>
+                                                            </Border>
+                                                        </StackPanel>
+                                                        <TextBlock Text="{Binding DateRange}"
+                                                                   FontSize="14"
+                                                                   Foreground="#6B7280"/>
+                                                    </StackPanel>
+
+                                                    <Button Grid.Column="1"
+                                                            Style="{StaticResource SmallDeleteButton}"
+                                                            Tag="{Binding Id}"
+                                                            Click="DeleteEmployee_Click">
+                                                        <TextBlock Text="✕"
+                                                                   FontWeight="Bold"/>
+                                                    </Button>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <TextBlock x:Name="NoEmployeesText"
+                                           Text="No employees added yet. Create a grid and add your first employee above!"
+                                           FontSize="14"
+                                           Foreground="#9CA3AF"
+                                           TextAlignment="Center"
+                                           Margin="0,20,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <Grid x:Name="ImportDataPage" Visibility="Collapsed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer.Resources>
+                        <Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBar}"/>
+                    </ScrollViewer.Resources>
+                    <StackPanel>
+                        <Button x:Name="ImportBackButton"
+                                Content="← Back"
+                                Style="{StaticResource ModernButton}"
+                                Background="#6B7280"
+                                HorizontalAlignment="Left"
+                                Width="100"
+                                Height="36"
+                                FontSize="13"
+                                Margin="0,0,0,20"
+                                Click="BackButton_Click"
+                                Visibility="Collapsed"/>
+
+                        <TextBlock Text="Import Schedule Data"
+                                   FontSize="28"
+                                   FontWeight="Bold"
+                                   Foreground="#111827"
+                                   Margin="0,0,0,28"/>
+
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="Choose Import Method"
+                                           FontSize="20"
+                                           FontWeight="SemiBold"
+                                           Margin="0,0,0,20"/>
+
+                                <StackPanel Margin="0,0,0,24">
+                                    <TextBlock Text="Data Source"
+                                               FontSize="14"
+                                               FontWeight="Medium"
+                                               Margin="0,0,0,6"/>
+                                    <ComboBox x:Name="ImportSourceBox"
+                                              Style="{StaticResource ModernComboBox}"
+                                              ItemContainerStyle="{StaticResource ModernComboBoxItem}"
+                                              Width="300"
+                                              SelectionChanged="ImportSourceBox_SelectionChanged">
+                                        <ComboBoxItem Content="📁 Upload CSV File"/>
+                                        <ComboBoxItem Content="🔗 LettuceMeet Link"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <Border x:Name="FileUploadArea"
+                                        Style="{StaticResource FileUploadBorder}"
+                                        MouseLeftButtonDown="UploadArea_MouseLeftButtonDown"
+                                        Visibility="Visible">
+                                    <StackPanel HorizontalAlignment="Center"
+                                                VerticalAlignment="Center">
+                                        <TextBlock Text="📊"
+                                                   FontSize="48"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,0,0,16"/>
+
+                                        <TextBlock Text="Upload CSV Schedule File"
+                                                   FontSize="18"
+                                                   FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,0,0,8"/>
+
+                                        <TextBlock Text="CSV files only"
+                                                   FontSize="14"
+                                                   Foreground="#64748B"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,0,0,24"/>
+
+                                        <Button Content="Browse CSV Files"
+                                                Width="160"
+                                                Height="40"
+                                                Style="{StaticResource ModernButton}"
+                                                Click="BrowseButton_Click"/>
+
+                                        <TextBlock Text="Download template for correct format"
+                                                   FontSize="12"
+                                                   Foreground="#6B7280"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,12,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border x:Name="LettuceMeetInputArea"
+                                        Style="{StaticResource Card}"
+                                        Visibility="Collapsed"
+                                        Margin="0,16,0,0">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                            <TextBlock Text="🔗"
+                                                       FontSize="20"
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,12,0"/>
+                                            <TextBlock Text="LettuceMeet Event Link"
+                                                       FontSize="18"
+                                                       FontWeight="SemiBold"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+
+                                        <StackPanel>
+                                            <TextBlock Text="Paste LettuceMeet URL"
+                                                       FontSize="14"
+                                                       FontWeight="Medium"
+                                                       Margin="0,0,0,6"/>
+                                            <Grid>
+                                                <TextBox x:Name="LettuceMeetUrlBox"
+                                                         Style="{StaticResource RoundedTextBox}"
+                                                         ToolTip="Paste your LettuceMeet event URL (e.g., https://lettucemeet.com/l/abc123)"/>
+                                                <TextBlock Text="Paste LettuceMeet URL here"
+                                                           IsHitTestVisible="False"
+                                                           FontSize="14"
+                                                           Foreground="#9CA3AF"
+                                                           Margin="18,0,0,0"
+                                                           VerticalAlignment="Center"
+                                                           Cursor="IBeam">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Text, ElementName=LettuceMeetUrlBox}" Value="">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Text, ElementName=LettuceMeetUrlBox}" Value="{x:Null}">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Grid>
+                                        </StackPanel>
+
+                                        <Button x:Name="ExtractFromLettuceMeetButton"
+                                                Content="Extract Data"
+                                                Width="200"
+                                                Height="44"
+                                                Style="{StaticResource ModernButton}"
+                                                FontSize="14"
+                                                HorizontalAlignment="Right"
+                                                Margin="0,20,0,0"
+                                                Click="ExtractFromLettuceMeetButton_Click"/>
+
+                                        <Border x:Name="ExtractionStatus"
+                                                Background="#EEF2FF"
+                                                BorderBrush="#C7D2FE"
+                                                BorderThickness="1"
+                                                CornerRadius="8"
+                                                Padding="12"
+                                                Margin="0,16,0,0"
+                                                Visibility="Collapsed">
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                                    <TextBlock x:Name="ExtractionStatusIcon"
+                                                               Text="⏳"
+                                                               FontSize="16"
+                                                               VerticalAlignment="Center"
+                                                               Margin="0,0,8,0"/>
+                                                    <TextBlock x:Name="ExtractionStatusText"
+                                                               Text="Extracting data..."
+                                                               FontSize="13"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="#4F46E5"/>
+                                                </StackPanel>
+                                                <TextBlock x:Name="ExtractionStatusDetails"
+                                                           Text=""
+                                                           FontSize="12"
+                                                           Foreground="#6366F1"
+                                                           TextWrapping="Wrap"
+                                                           Margin="0,4,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <Border x:Name="ImportedDataCard"
+                                Style="{StaticResource Card}"
+                                Visibility="Collapsed">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,0,16">
+                                    <TextBlock x:Name="ImportStatusIcon"
+                                               Text="✅"
+                                               FontSize="20"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,12,0"/>
+                                    <TextBlock x:Name="ImportStatusTitle"
+                                               Text="Data Extracted"
+                                               FontSize="18"
+                                               FontWeight="SemiBold"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock x:Name="ImportIcon"
+                                               Text="📊"
+                                               FontSize="24"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,12,0"/>
+
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock x:Name="ImportTitleText"
+                                                   FontSize="16"
+                                                   FontWeight="Medium"/>
+                                        <TextBlock x:Name="ImportDetailsText"
+                                                   FontSize="14"
+                                                   Foreground="#64748B"
+                                                   Margin="0,4,0,0"/>
+                                        <TextBlock x:Name="ImportStatsText"
+                                                   FontSize="13"
+                                                   Foreground="#4F46E5"
+                                                   Margin="0,4,0,0"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="2">
+                                        <Button x:Name="ImportDataButton"
+                                                Content="📥 Import"
+                                                Width="120"
+                                                Height="36"
+                                                Style="{StaticResource ModernButton}"
+                                                FontSize="13"
+                                                Click="ImportDataButton_Click"
+                                                Margin="0,0,0,8"/>
+                                        <Button Content="Delete"
+                                                Width="100"
+                                                Height="36"
+                                                Style="{StaticResource ModernButton}"
+                                                FontSize="13"
+                                                Background="#EF4444"
+                                                Click="ChangeImportButton_Click"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Card}"
+                                Margin="0,24,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Import Formats"
+                                           FontSize="18"
+                                           FontWeight="SemiBold"
+                                           Margin="0,0,0,12"/>
+
+                                <Border Background="#F8FAFC"
+                                        CornerRadius="8"
+                                        Padding="12"
+                                        Margin="0,0,0,12">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                            <TextBlock Text="📁"
+                                                       FontSize="16"
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,8,0"/>
+                                            <TextBlock Text="CSV Format Only"
+                                                       FontSize="15"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#4F46E5"/>
+                                        </StackPanel>
+                                        <StackPanel Margin="12,0,0,0">
+                                            <TextBlock Text="• CSV files (.csv) only"
+                                                       FontSize="13"
+                                                       Margin="0,0,0,4"/>
+                                            <TextBlock Text="• Download template below for correct format"
+                                                       FontSize="13"
+                                                       Margin="0,0,0,4"/>
+                                            <TextBlock Text="• Two formats supported: time slots or date grid"
+                                                       FontSize="13"
+                                                       Margin="0,0,0,4"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Background="#EEF2FF"
+                                        CornerRadius="8"
+                                        Padding="12">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                            <TextBlock Text="🔗"
+                                                       FontSize="16"
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,8,0"/>
+                                            <TextBlock Text="LettuceMeet Integration"
+                                                       FontSize="15"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#4F46E5"/>
+                                        </StackPanel>
+                                        <TextBlock Text="Automatically extract schedule data from LettuceMeet polls:"
+                                                   FontSize="13"
+                                                   Margin="0,0,0,6"/>
+                                        <StackPanel Margin="12,0,0,0">
+                                            <TextBlock Text="• Paste your LettuceMeet event URL"
+                                                       FontSize="13"
+                                                       Margin="0,0,0,2"/>
+                                            <TextBlock Text="• Automatically extracts all participant availability"
+                                                       FontSize="13"
+                                                       Margin="0,0,0,2"/>
+                                            <TextBlock Text="• Converts times to local timezone"
+                                                       FontSize="13"
+                                                       Margin="0,0,0,2"/>
+                                            <TextBlock Text="• Preserves all scheduling metadata"
+                                                       FontSize="13"
+                                                       Margin="0,0,0,2"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <Button Content="Download CSV Template"
+                                        Width="200"
+                                        Height="40"
+                                        Style="{StaticResource ModernButton}"
+                                        FontSize="13"
+                                        Click="DownloadSampleButton_Click"
+                                        Margin="0,16,0,0"/>
+
+                                <TextBlock Text="Download template to see expected CSV format"
+                                           FontSize="12"
+                                           Foreground="#6B7280"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,8,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <Grid x:Name="ViewAvailabilitiesPage" Visibility="Collapsed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer.Resources>
+                        <Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBar}"/>
+                    </ScrollViewer.Resources>
+                    <StackPanel>
+                        <Button x:Name="AvailabilitiesBackButton"
+                                Content="← Back"
+                                Style="{StaticResource ModernButton}"
+                                Background="#6B7280"
+                                HorizontalAlignment="Left"
+                                Width="100"
+                                Height="36"
+                                FontSize="13"
+                                Margin="0,0,0,20"
+                                Click="BackButton_Click"
+                                Visibility="Collapsed"/>
+
+                        <TextBlock Text="📊 View Availabilities"
+                                   FontSize="28"
+                                   FontWeight="Bold"
+                                   Foreground="#111827"
+                                   Margin="0,0,0,28"/>
+
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="📈 Availability Statistics"
+                                           FontSize="20"
+                                           FontWeight="SemiBold"
+                                           Margin="0,0,0,20"/>
+
+                                <WrapPanel>
+                                    <Border Style="{StaticResource Card}" Width="220" Margin="0,0,16,16">
+                                        <StackPanel>
+                                            <TextBlock Text="👥"
+                                                       FontSize="24"
+                                                       Margin="0,0,0,8"/>
+                                            <TextBlock Text="Total People"
+                                                       FontSize="14"
+                                                       Foreground="#64748B"/>
+                                            <TextBlock x:Name="TotalPeopleText"
+                                                       Text="0"
+                                                       FontSize="24"
+                                                       FontWeight="Bold"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border Style="{StaticResource Card}" Width="220" Margin="0,0,16,16">
+                                        <StackPanel>
+                                            <TextBlock Text="✍️"
+                                                       FontSize="24"
+                                                       Margin="0,0,0,8"/>
+                                            <TextBlock Text="Manual Entries"
+                                                       FontSize="14"
+                                                       Foreground="#64748B"/>
+                                            <TextBlock x:Name="ManualEntriesText"
+                                                       Text="0"
+                                                       FontSize="24"
+                                                       FontWeight="Bold"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border Style="{StaticResource Card}" Width="220" Margin="0,0,16,16">
+                                        <StackPanel>
+                                            <TextBlock Text="📥"
+                                                       FontSize="24"
+                                                       Margin="0,0,0,8"/>
+                                            <TextBlock Text="Imported Data"
+                                                       FontSize="14"
+                                                       Foreground="#64748B"/>
+                                            <TextBlock x:Name="ImportedDataText"
+                                                       Text="0"
+                                                       FontSize="24"
+                                                       FontWeight="Bold"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border Style="{StaticResource Card}" Width="300" Margin="0,0,16,16">
+                                        <StackPanel>
+                                            <TextBlock Text="📅"
+                                                       FontSize="24"
+                                                       Margin="0,0,0,8"/>
+                                            <TextBlock Text="Date Range of Imported Data"
+                                                       FontSize="14"
+                                                       Foreground="#64748B"/>
+                                            <TextBlock x:Name="DateRangeText"
+                                                       Text="No data"
+                                                       FontSize="20"
+                                                       FontWeight="Bold"
+                                                       TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Border>
+                                </WrapPanel>
+
+                                <Border Background="#F8FAFC"
+                                        CornerRadius="8"
+                                        Padding="16"
+                                        Margin="0,20,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="Batch Management"
+                                                   FontSize="16"
+                                                   FontWeight="SemiBold"
+                                                   Margin="0,0,0,12"/>
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Grid Grid.Column="0" Margin="0,0,12,0">
+                                                <TextBox x:Name="BatchNameTextBox"
+                                                         Style="{StaticResource RoundedTextBox}"/>
+                                                <TextBlock Text="Enter batch name..."
+                                                           IsHitTestVisible="False"
+                                                           FontSize="14"
+                                                           Foreground="#9CA3AF"
+                                                           Margin="18,0,0,0"
+                                                           VerticalAlignment="Center">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Text, ElementName=BatchNameTextBox}" Value="">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Text, ElementName=BatchNameTextBox}" Value="{x:Null}">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Grid>
+
+                                            <Button x:Name="SaveBatchButton"
+                                                    Grid.Column="1"
+                                                    Content="💾 Save as Batch"
+                                                    Width="140"
+                                                    Height="44"
+                                                    Style="{StaticResource ModernButton}"
+                                                    FontSize="14"
+                                                    Click="SaveBatchButton_Click"/>
+                                        </Grid>
+
+                                        <Border Background="White"
+                                                CornerRadius="6"
+                                                BorderBrush="#E5E7EB"
+                                                BorderThickness="1"
+                                                Margin="0,12,0,0"
+                                                Padding="12"
+                                                MaxHeight="150">
+                                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                                <ScrollViewer.Resources>
+                                                    <Style TargetType="ScrollBar" BasedOn="{StaticResource ThinnerScrollBar}"/>
+                                                </ScrollViewer.Resources>
+                                                <StackPanel>
+                                                    <TextBlock Text="Saved Batches:"
+                                                               FontSize="13"
+                                                               FontWeight="Medium"
+                                                               Margin="0,0,0,8"/>
+
+                                                    <ItemsControl x:Name="BatchListControl">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Border Style="{StaticResource PersonItem}">
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="*"/>
+                                                                            <ColumnDefinition Width="Auto"/>
+                                                                            <ColumnDefinition Width="Auto"/>
+                                                                        </Grid.ColumnDefinitions>
+
+                                                                        <StackPanel Grid.Column="0">
+                                                                            <TextBlock Text="{Binding Name}"
+                                                                                       FontSize="14"
+                                                                                       FontWeight="Medium"/>
+                                                                            <TextBlock Text="{Binding CreatedDate, StringFormat='Created: {0:MMM dd, yyyy}'}"
+                                                                                       FontSize="12"
+                                                                                       Foreground="#6B7280"/>
+                                                                            <TextBlock Text="{Binding Count, StringFormat=\{0\} employees}"
+                                                                                       FontSize="12"
+                                                                                       Foreground="#4F46E5"/>
+                                                                        </StackPanel>
+
+                                                                        <Button Grid.Column="1"
+                                                                                Style="{StaticResource SmallEditButton}"
+                                                                                Tag="{Binding Id}"
+                                                                                Click="RenameBatch_Click"
+                                                                                Margin="0,0,4,0">
+                                                                            <TextBlock Text="✏️"/>
+                                                                        </Button>
+
+                                                                        <Button Grid.Column="2"
+                                                                                Style="{StaticResource SmallDeleteButton}"
+                                                                                Tag="{Binding Id}"
+                                                                                Click="DeleteBatch_Click">
+                                                                            <TextBlock Text="✕"
+                                                                                       FontWeight="Bold"/>
+                                                                        </Button>
+                                                                    </Grid>
+                                                                </Border>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+
+                                                    <TextBlock x:Name="NoBatchesText"
+                                                               Text="No batches saved yet. Save your first batch above!"
+                                                               FontSize="13"
+                                                               Foreground="#9CA3AF"
+                                                               TextAlignment="Center"
+                                                               Margin="0,12,0,0"/>
+                                                </StackPanel>
+                                            </ScrollViewer>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,20">
+                                    <TextBlock Text="👥 Combined Availabilities"
+                                               FontSize="20"
+                                               FontWeight="SemiBold"
+                                               VerticalAlignment="Center"/>
+
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button x:Name="SelectAllButton"
+                                                Content="☑ Select All"
+                                                Width="120"
+                                                Height="36"
+                                                Style="{StaticResource ModernButton}"
+                                                FontSize="13"
+                                                Background="#6B7280"
+                                                Click="SelectAllButton_Click"
+                                                Margin="0,0,8,0"/>
+
+                                        <Button x:Name="DeleteSelectedButton"
+                                                Content="🗑️ Delete Selected"
+                                                Width="140"
+                                                Height="36"
+                                                Style="{StaticResource ModernButton}"
+                                                FontSize="13"
+                                                Background="#EF4444"
+                                                Click="DeleteSelectedButton_Click"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <ItemsControl x:Name="CombinedAvailabilitiesList">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource EmployeeCard}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <CheckBox x:Name="EmployeeCheckBox"
+                                                              Grid.Column="0"
+                                                              VerticalAlignment="Center"
+                                                              Margin="0,0,12,0"
+                                                              IsChecked="{Binding IsSelected}"/>
+
+                                                    <StackPanel Grid.Column="1">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Name}"
+                                                                       FontSize="16"
+                                                                       FontWeight="SemiBold"
+                                                                       Margin="0,0,8,0"/>
+                                                            <Border Style="{StaticResource DataSourceBadge}">
+                                                                <TextBlock Text="{Binding Source}"
+                                                                           FontSize="11"
+                                                                           FontWeight="Medium"
+                                                                           Foreground="{Binding SourceColor}"/>
+                                                            </Border>
+                                                        </StackPanel>
+                                                        <TextBlock Text="{Binding DateRange}"
+                                                                   FontSize="14"
+                                                                   Foreground="#6B7280"/>
+                                                    </StackPanel>
+
+                                                    <Button Grid.Column="2"
+                                                            Style="{StaticResource SmallDeleteButton}"
+                                                            Tag="{Binding Id}"
+                                                            Click="DeleteCombinedEmployee_Click">
+                                                        <TextBlock Text="✕"
+                                                                   FontWeight="Bold"/>
+                                                    </Button>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <TextBlock x:Name="NoCombinedAvailabilitiesText"
+                                           Text="No availabilities found. Add manual entries or import data first!"
+                                           FontSize="14"
+                                           Foreground="#9CA3AF"
+                                           TextAlignment="Center"
+                                           Margin="0,20,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <Grid x:Name="SchedulePage" Visibility="Collapsed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer.Resources>
+                        <Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBar}"/>
+                    </ScrollViewer.Resources>
+                    <StackPanel>
+                        <Button x:Name="ScheduleBackButton"
+                                Content="← Back to Schedules"
+                                Style="{StaticResource ModernButton}"
+                                Background="#6B7280"
+                                HorizontalAlignment="Left"
+                                Width="140"
+                                Height="36"
+                                FontSize="13"
+                                Margin="0,0,0,20"
+                                Click="ScheduleBackButton_Click"
+                                Visibility="Collapsed"/>
+
+                        <StackPanel x:Name="ScheduleListView">
+                            <TextBlock Text="📋 Schedule Management"
+                                       FontSize="28"
+                                       FontWeight="Bold"
+                                       Foreground="#111827"
+                                       Margin="0,0,0,28"/>
+
+                            <Border Style="{StaticResource Card}">
+                                <StackPanel>
+                                    <TextBlock Text="Your Schedules"
+                                               FontSize="20"
+                                               FontWeight="SemiBold"
+                                               Margin="0,0,0,20"/>
+
+                                    <ItemsControl x:Name="ScheduleListControl">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Style="{StaticResource ScheduleItemCard}"
+                                                        MouseLeftButtonDown="ScheduleItem_MouseLeftButtonDown">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <StackPanel Grid.Column="0">
+                                                            <TextBlock Text="{Binding Name}"
+                                                                       FontSize="18"
+                                                                       FontWeight="SemiBold"/>
+                                                            <TextBlock Text="{Binding CreatedDate, StringFormat='Created: {0:MMM dd, yyyy HH:mm}'}"
+                                                                       FontSize="13"
+                                                                       Foreground="#6B7280"
+                                                                       Margin="0,4,0,0"/>
+                                                            <TextBlock Text="{Binding Status}"
+                                                                       FontSize="13"
+                                                                       FontWeight="Medium">
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="Foreground" Value="#10B981"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding Status}" Value="Incomplete">
+                                                                                <Setter Property="Foreground" Value="#EF4444"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
+                                                        </StackPanel>
+
+                                                        <Button Grid.Column="1"
+                                                                Content="👁️ View"
+                                                                Width="80"
+                                                                Height="36"
+                                                                Style="{StaticResource ModernButton}"
+                                                                FontSize="13"
+                                                                Tag="{Binding Id}"
+                                                                Click="ViewSchedule_Click"
+                                                                Margin="0,0,8,0"/>
+
+                                                        <Button Grid.Column="2"
+                                                                Content="✏️ Rename"
+                                                                Width="90"
+                                                                Height="36"
+                                                                Style="{StaticResource ModernButton}"
+                                                                FontSize="13"
+                                                                Background="#3B82F6"
+                                                                Tag="{Binding Id}"
+                                                                Click="RenameSchedule_Click"
+                                                                Margin="0,0,8,0"/>
+
+                                                        <Button Grid.Column="3"
+                                                                Style="{StaticResource SmallDeleteButton}"
+                                                                Tag="{Binding Id}"
+                                                                Click="DeleteSchedule_Click">
+                                                            <TextBlock Text="✕"
+                                                                       FontWeight="Bold"/>
+                                                        </Button>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <TextBlock x:Name="NoSchedulesText"
+                                               Text="No schedules created yet. Select a batch in Setup and generate a schedule."
+                                               FontSize="14"
+                                               Foreground="#9CA3AF"
+                                               TextAlignment="Center"
+                                               Margin="0,20,0,0"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel x:Name="ScheduleDetailView" Visibility="Collapsed">
+                            <TextBlock x:Name="ScheduleDetailTitle"
+                                       Text="Schedule Details"
+                                       FontSize="28"
+                                       FontWeight="Bold"
+                                       Foreground="#111827"
+                                       Margin="0,0,0,28"/>
+
+                            <Border Style="{StaticResource Card}">
+                                <StackPanel>
+                                    <Grid Margin="0,0,0,20">
+                                        <TextBlock x:Name="CurrentScheduleName"
+                                                   Text="Schedule"
+                                                   FontSize="20"
+                                                   FontWeight="SemiBold"
+                                                   VerticalAlignment="Center"/>
+
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <Button Content="📊 Export as PowerPoint"
+                                                    Width="180"
+                                                    Height="36"
+                                                    Style="{StaticResource ModernButton}"
+                                                    FontSize="13"
+                                                    Click="ExportPowerPoint_Click"
+                                                    Margin="0,0,8,0"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Background="#F8FAFC"
+        CornerRadius="8"
+        Padding="12"
+        Margin="0,0,0,12">
+                                        <StackPanel Orientation="Horizontal">
+                                            <StackPanel Margin="0,0,20,0">
+                                                <TextBlock Text="Rows"
+                       FontSize="13"
+                       FontWeight="Medium"
+                       Margin="0,0,0,6"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Button x:Name="AddRowButton"
+                        Content="Add"
+                        Width="100"
+                        Height="36"
+                        Style="{StaticResource ModernButton}"
+                        FontSize="13"
+                        Background="#10B981"
+                        Margin="0,0,8,0"
+                        Click="AddRowButton_Click"/>
+                                                    <Button x:Name="DeleteRowButton"
+                        Content="Delete"
+                        Width="100"
+                        Height="36"
+                        Style="{StaticResource ModernButton}"
+                        FontSize="13"
+                        Background="#EF4444"
+                        Click="DeleteRowButton_Click"/>
+                                                </StackPanel>
+                                                <TextBlock Text="Adds/removes shift intervals"
+                       FontSize="11"
+                       Foreground="#6B7280"
+                       Margin="0,4,0,0"/>
+                                            </StackPanel>
+
+                                            <StackPanel>
+                                                <TextBlock Text="Columns"
+                       FontSize="13"
+                       FontWeight="Medium"
+                       Margin="0,0,0,6"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Button x:Name="AddColumnButton"
+                        Content="Add"
+                        Width="100"
+                        Height="36"
+                        Style="{StaticResource ModernButton}"
+                        FontSize="13"
+                        Background="#10B981"
+                        Margin="0,0,8,0"
+                        Click="AddColumnButton_Click"/>
+                                                    <Button x:Name="DeleteColumnButton"
+                        Content="Delete"
+                        Width="100"
+                        Height="36"
+                        Style="{StaticResource ModernButton}"
+                        FontSize="13"
+                        Background="#EF4444"
+                        Click="DeleteColumnButton_Click"/>
+                                                </StackPanel>
+                                                <TextBlock Text="Adds/removes days"
+                       FontSize="11"
+                       Foreground="#6B7280"
+                       Margin="0,4,0,0"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border BorderBrush="#E5E7EB"
+        BorderThickness="1"
+        CornerRadius="8"
+        Padding="1"
+        Background="White">
+                                        <ScrollViewer x:Name="ScheduleDetailScrollViewer"
+                  HorizontalScrollBarVisibility="Auto"
+                  VerticalScrollBarVisibility="Auto"
+                  MaxHeight="500">
+                                            <ScrollViewer.Resources>
+                                                <Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBar}"/>
+                                            </ScrollViewer.Resources>
+                                            <Grid x:Name="ScheduleDetailGrid" Margin="0">
+                                            </Grid>
+                                        </ScrollViewer>
+                                    </Border>
+
+                                    <WrapPanel Margin="0,24,0,0">
+                                        <Border Style="{StaticResource ScheduleItemCard}"
+                                                Width="200"
+                                                Margin="0,0,16,16">
+                                            <StackPanel>
+                                                <TextBlock Text="👥"
+                                                           FontSize="24"
+                                                           Margin="0,0,0,8"/>
+                                                <TextBlock Text="Assigned People"
+                                                           FontSize="14"
+                                                           Foreground="#64748B"/>
+                                                <TextBlock x:Name="SchedulePeopleCount"
+                                                           Text="0"
+                                                           FontSize="24"
+                                                           FontWeight="Bold"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource ScheduleItemCard}"
+                                                Width="200"
+                                                Margin="0,0,16,16">
+                                            <StackPanel>
+                                                <TextBlock Text="⏱️"
+                                                           FontSize="24"
+                                                           Margin="0,0,0,8"/>
+                                                <TextBlock Text="Total Shifts"
+                                                           FontSize="14"
+                                                           Foreground="#64748B"/>
+                                                <TextBlock x:Name="ScheduleShiftsCount"
+                                                           Text="0"
+                                                           FontSize="24"
+                                                           FontWeight="Bold"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource ScheduleItemCard}"
+                                                Width="200"
+                                                Margin="0,0,16,16">
+                                            <StackPanel>
+                                                <TextBlock Text="📊"
+                                                           FontSize="24"
+                                                           Margin="0,0,0,8"/>
+                                                <TextBlock Text="Coverage"
+                                                           FontSize="14"
+                                                           Foreground="#64748B"/>
+                                                <TextBlock x:Name="ScheduleCoverage"
+                                                           Text="0%"
+                                                           FontSize="24"
+                                                           FontWeight="Bold"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </WrapPanel>
+
+                                    <Border Style="{StaticResource Card}" Margin="0,24,0,0">
+                                        <StackPanel>
+                                            <TextBlock Text="✏️ Edit Schedule Grid"
+                                                       FontSize="20"
+                                                       FontWeight="SemiBold"
+                                                       Margin="0,0,0,20"/>
+
+                                            <Border Background="#F8FAFC"
+                                                    CornerRadius="8"
+                                                    Padding="16"
+                                                    Margin="0,0,0,16">
+                                                <StackPanel>
+                                                    <TextBlock Text="Selected Cell:"
+                                                               FontSize="16"
+                                                               FontWeight="SemiBold"
+                                                               Margin="0,0,0,12"/>
+
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <StackPanel Grid.Column="0">
+                                                            <TextBlock x:Name="SelectedCellInfo"
+                                                                       Text="No cell selected"
+                                                                       FontSize="14"
+                                                                       Foreground="#6B7280"/>
+                                                            <TextBlock x:Name="SelectedCellNames"
+                                                                       Text=""
+                                                                       FontSize="13"
+                                                                       Foreground="#4F46E5"
+                                                                       Margin="0,4,0,0"
+                                                                       TextWrapping="Wrap"/>
+                                                        </StackPanel>
+
+                                                        <Button x:Name="AddNameButton"
+                                                                Grid.Column="1"
+                                                                Content="➕ Add Name"
+                                                                Width="110"
+                                                                Height="36"
+                                                                Style="{StaticResource ModernButton}"
+                                                                FontSize="13"
+                                                                Click="AddNameToCell_Click"
+                                                                Margin="0,0,8,0"/>
+
+                                                        <Button x:Name="ChangeNameButton"
+                                                                Grid.Column="2"
+                                                                Content="✏️ Change Name"
+                                                                Width="120"
+                                                                Height="36"
+                                                                Style="{StaticResource ModernButton}"
+                                                                FontSize="13"
+                                                                Background="#3B82F6"
+                                                                Click="ChangeNameInCell_Click"/>
+                                                    </Grid>
+
+                                                    <TextBlock Style="{StaticResource InfoText}"
+                                                               Text="Click on a cell in the grid above to select it, then add or change names in that cell."/>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <Border x:Name="SelectedCellAssignmentsContainer"
+                                                    Background="#F8FAFC"
+                                                    CornerRadius="8"
+                                                    Padding="16"
+                                                    Visibility="Collapsed">
+                                                <StackPanel>
+                                                    <TextBlock Text="Current Assignments in Selected Cell:"
+                                                               FontSize="16"
+                                                               FontWeight="SemiBold"
+                                                               Margin="0,0,0,12"/>
+
+                                                    <ItemsControl x:Name="SelectedCellAssignmentsList">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Border Style="{StaticResource PersonItem}">
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="*"/>
+                                                                            <ColumnDefinition Width="Auto"/>
+                                                                        </Grid.ColumnDefinitions>
+
+                                                                        <TextBlock Text="{Binding}"
+                                                                                   FontSize="14"
+                                                                                   VerticalAlignment="Center"/>
+
+                                                                        <Button Grid.Column="1"
+                                                                                Style="{StaticResource SmallDeleteButton}"
+                                                                                Tag="{Binding}"
+                                                                                Click="RemoveNameFromCell_Click">
+                                                                            <TextBlock Text="✕"
+                                                                                       FontWeight="Bold"/>
+                                                                        </Button>
+                                                                    </Grid>
+                                                                </Border>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <Grid x:Name="ExportPage" Visibility="Collapsed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer.Resources>
+                        <Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBar}"/>
+                    </ScrollViewer.Resources>
+                    <Views:ExportPage x:Name="ExportPageControl"/>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.ColumnSpan="2" Panel.ZIndex="1000">
+            <Views:PopupSystem x:Name="PopupSystemControl" />
+        </Grid>
+
+    </Grid>
+</Window>

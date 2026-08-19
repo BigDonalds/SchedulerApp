@@ -1,0 +1,16 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Aggregates all style resource dictionaries for the application.
+         MainWindow.xaml merges this single dictionary so every style key
+         (ScrollBar, Button, ComboBox, Card, TextBox, etc.) is available. -->
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ScrollBars.xaml"/>
+        <ResourceDictionary Source="Buttons.xaml"/>
+        <ResourceDictionary Source="ComboBoxes.xaml"/>
+        <ResourceDictionary Source="Cards.xaml"/>
+        <ResourceDictionary Source="Misc.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>

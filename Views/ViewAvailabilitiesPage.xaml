@@ -1,0 +1,370 @@
+<UserControl x:Class="SchedulerApp.Views.ViewAvailabilitiesPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="900">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="AvailabilityItemCard" TargetType="Border">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="CornerRadius" Value="10"/>
+                <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="16"/>
+                <Setter Property="Margin" Value="0,0,0,12"/>
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect BlurRadius="10" ShadowDepth="1.5" Opacity="0.06"/>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="BorderBrush" Value="#4F46E5"/>
+                        <Setter Property="Effect">
+                            <Setter.Value>
+                                <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.1"/>
+                            </Setter.Value>
+                        </Setter>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer.Resources>
+            <Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBar}"/>
+        </ScrollViewer.Resources>
+        <StackPanel>
+            <Button x:Name="AvailabilitiesBackButton"
+                    Content="← Back"
+                    Style="{StaticResource ModernButton}"
+                    Background="#6B7280"
+                    HorizontalAlignment="Left"
+                    Width="100"
+                    Height="36"
+                    FontSize="13"
+                    Margin="0,0,0,20"
+                    Click="BackButton_Click"
+                    Visibility="Collapsed"/>
+
+            <TextBlock Text="📊 View Availabilities"
+                       FontSize="28"
+                       FontWeight="Bold"
+                       Foreground="#111827"
+                       Margin="0,0,0,28"/>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="📈 Availability Statistics"
+                               FontSize="20"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,20"/>
+
+                    <WrapPanel>
+                        <Border Background="#F0FDF4"
+                                CornerRadius="10"
+                                Padding="14"
+                                Width="200"
+                                Margin="0,0,12,12">
+                            <StackPanel>
+                                <TextBlock Text="Total People"
+                                           FontSize="11"
+                                           Foreground="#6B7280"/>
+                                <TextBlock x:Name="TotalPeopleText"
+                                           Text="0"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           Foreground="#059669"
+                                           Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#FEFCE8"
+                                CornerRadius="10"
+                                Padding="14"
+                                Width="200"
+                                Margin="0,0,12,12">
+                            <StackPanel>
+                                <TextBlock Text="Manual Entries"
+                                           FontSize="11"
+                                           Foreground="#6B7280"/>
+                                <TextBlock x:Name="ManualEntriesText"
+                                           Text="0"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           Foreground="#D97706"
+                                           Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#F0F9FF"
+                                CornerRadius="10"
+                                Padding="14"
+                                Width="200"
+                                Margin="0,0,12,12">
+                            <StackPanel>
+                                <TextBlock Text="Imported Data"
+                                           FontSize="11"
+                                           Foreground="#6B7280"/>
+                                <TextBlock x:Name="ImportedDataText"
+                                           Text="0"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           Foreground="#0284C7"
+                                           Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#FDF2F8"
+                                CornerRadius="10"
+                                Padding="14"
+                                Width="280"
+                                Margin="0,0,12,12">
+                            <StackPanel>
+                                <TextBlock Text="Date Range of Imported Data"
+                                           FontSize="11"
+                                           Foreground="#6B7280"/>
+                                <TextBlock x:Name="DateRangeText"
+                                           Text="No data"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Foreground="#DB2777"
+                                           TextWrapping="Wrap"
+                                           Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </WrapPanel>
+
+                    <Border Background="#F8FAFC"
+                            CornerRadius="8"
+                            Padding="16"
+                            Margin="0,20,0,0">
+                        <StackPanel>
+                            <TextBlock Text="Batch Management"
+                                       FontSize="16"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,12"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid Grid.Column="0" Margin="0,0,12,0">
+                                    <TextBox x:Name="BatchNameTextBox"
+                                             Style="{StaticResource RoundedTextBox}"/>
+                                    <TextBlock Text="Enter batch name..."
+                                               IsHitTestVisible="False"
+                                               FontSize="14"
+                                               Foreground="#9CA3AF"
+                                               Margin="18,0,0,0"
+                                               VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Text, ElementName=BatchNameTextBox}" Value="">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Text, ElementName=BatchNameTextBox}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Grid>
+
+                                <Button x:Name="SaveBatchButton"
+                                        Grid.Column="1"
+                                        Content="💾 Save as Batch"
+                                        Width="140"
+                                        Height="44"
+                                        Style="{StaticResource ModernButton}"
+                                        FontSize="14"
+                                        Click="SaveBatchButton_Click"/>
+                            </Grid>
+
+                            <Border Background="White"
+                                    CornerRadius="6"
+                                    BorderBrush="#E5E7EB"
+                                    BorderThickness="1"
+                                    Margin="0,12,0,0"
+                                    Padding="12"
+                                    MaxHeight="150">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                    <ScrollViewer.Resources>
+                                        <Style TargetType="ScrollBar" BasedOn="{StaticResource ThinnerScrollBar}"/>
+                                    </ScrollViewer.Resources>
+                                    <StackPanel>
+                                        <TextBlock Text="Saved Batches:"
+                                                   FontSize="13"
+                                                   FontWeight="Medium"
+                                                   Margin="0,0,0,8"/>
+
+                                        <ItemsControl x:Name="BatchListControl">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Style="{StaticResource AvailabilityItemCard}">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <StackPanel Grid.Column="0">
+                                                                <TextBlock Text="{Binding Name}"
+                                                                           FontSize="14"
+                                                                           FontWeight="SemiBold"
+                                                                           Foreground="#111827"/>
+                                                                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                                                    <TextBlock Text="{Binding CreatedDate, StringFormat='Created: {0:MMM dd, yyyy}'}"
+                                                                               FontSize="11"
+                                                                               Foreground="#6B7280"/>
+                                                                    <TextBlock Text=" • "
+                                                                               FontSize="11"
+                                                                               Foreground="#6B7280"/>
+                                                                    <TextBlock Text="{Binding Count, StringFormat=\{0\} employees}"
+                                                                               FontSize="11"
+                                                                               FontWeight="Medium"
+                                                                               Foreground="#4F46E5"/>
+                                                                </StackPanel>
+                                                            </StackPanel>
+
+                                                            <Button Grid.Column="1"
+                                                                    Style="{StaticResource SmallEditButton}"
+                                                                    Tag="{Binding Id}"
+                                                                    Click="RenameBatch_Click"
+                                                                    Margin="0,0,4,0">
+                                                                <TextBlock Text="✏️"/>
+                                                            </Button>
+
+                                                            <Button Grid.Column="2"
+                                                                    Style="{StaticResource SmallDeleteButton}"
+                                                                    Tag="{Binding Id}"
+                                                                    Click="DeleteBatch_Click">
+                                                                <TextBlock Text="✕"
+                                                                           FontWeight="Bold"/>
+                                                            </Button>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <TextBlock x:Name="NoBatchesText"
+                                                   Text="No batches saved yet. Save your first batch above!"
+                                                   FontSize="13"
+                                                   Foreground="#9CA3AF"
+                                                   TextAlignment="Center"
+                                                   Margin="0,12,0,0"/>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <Grid Margin="0,0,0,20">
+                        <TextBlock Text="👥 Combined Availabilities"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center"/>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button x:Name="SelectAllButton"
+                                    Content="☑ Select All"
+                                    Width="120"
+                                    Height="36"
+                                    Style="{StaticResource ModernButton}"
+                                    FontSize="13"
+                                    Background="#6B7280"
+                                    Click="SelectAllButton_Click"
+                                    Margin="0,0,8,0"/>
+
+                            <Button x:Name="DeleteSelectedButton"
+                                    Content="🗑️ Delete Selected"
+                                    Width="140"
+                                    Height="36"
+                                    Style="{StaticResource ModernButton}"
+                                    FontSize="13"
+                                    Background="#EF4444"
+                                    Click="DeleteSelectedButton_Click"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <ItemsControl x:Name="CombinedAvailabilitiesList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource AvailabilityItemCard}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <CheckBox x:Name="EmployeeCheckBox"
+                                                  Grid.Column="0"
+                                                  VerticalAlignment="Center"
+                                                  Margin="0,0,12,0"
+                                                  IsChecked="{Binding IsSelected}"/>
+
+                                        <StackPanel Grid.Column="1">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Name}"
+                                                           FontSize="14"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#111827"
+                                                           Margin="0,0,8,0"/>
+                                                <Border Style="{StaticResource DataSourceBadge}">
+                                                    <TextBlock Text="{Binding Source}"
+                                                               FontSize="11"
+                                                               FontWeight="Medium"
+                                                               Foreground="{Binding SourceColor}"/>
+                                                </Border>
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding DateRange}"
+                                                       FontSize="11"
+                                                       Foreground="#6B7280"
+                                                       Margin="0,4,0,0"/>
+                                        </StackPanel>
+
+                                        <Button Grid.Column="2"
+                                                Style="{StaticResource SmallDeleteButton}"
+                                                Tag="{Binding Id}"
+                                                Click="DeleteCombinedEmployee_Click">
+                                            <TextBlock Text="✕"
+                                                       FontWeight="Bold"/>
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock x:Name="NoCombinedAvailabilitiesText"
+                               Text="No availabilities found. Add manual entries or import data first!"
+                               FontSize="14"
+                               Foreground="#9CA3AF"
+                               TextAlignment="Center"
+                               Margin="0,20,0,0"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

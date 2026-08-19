@@ -1,0 +1,186 @@
+﻿<Window x:Class="SchedulerApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Views="clr-namespace:SchedulerApp.Views"
+        Title="Scheduler Pro"
+        Icon="Icons/AppIcon.ico"
+        Width="1150"
+        Height="700"
+        WindowStartupLocation="CenterScreen"
+        MinWidth="1000"
+        MinHeight="600"
+        Background="Transparent"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Title bar button style -->
+            <Style x:Key="TitleBarButton" TargetType="Button">
+                <Setter Property="Width" Value="46"/>
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#33FFFFFF"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#44FFFFFF"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Close button style (red on hover) -->
+            <Style x:Key="TitleBarCloseButton" TargetType="Button" BasedOn="{StaticResource TitleBarButton}">
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#E81123"/>
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="#F1707A"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <!-- Animated gradient trigger -->
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                    <ColorAnimation Storyboard.TargetName="TitleGradientStop1"
+                                   Storyboard.TargetProperty="Color"
+                                   From="#1E1B4B" To="#4C1D95"
+                                   Duration="0:0:6"/>
+                    <ColorAnimation Storyboard.TargetName="TitleGradientStop2"
+                                   Storyboard.TargetProperty="Color"
+                                   From="#312E81" To="#1E1B4B"
+                                   Duration="0:0:6"/>
+                    <ColorAnimation Storyboard.TargetName="TitleGradientStop3"
+                                   Storyboard.TargetProperty="Color"
+                                   From="#4C1D95" To="#312E81"
+                                   Duration="0:0:6"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <!-- Outer border with rounded corners -->
+    <Border CornerRadius="8" BorderBrush="#3730A3" BorderThickness="1" Background="#F5F6FA" ClipToBounds="True">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- ==================== CUSTOM TITLE BAR ==================== -->
+            <Border Grid.Row="0" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop x:Name="TitleGradientStop1" Color="#1E1B4B" Offset="0"/>
+                        <GradientStop x:Name="TitleGradientStop2" Color="#312E81" Offset="0.5"/>
+                        <GradientStop x:Name="TitleGradientStop3" Color="#4C1D95" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <!-- Snow particle canvas -->
+                    <Canvas x:Name="SnowCanvas" ClipToBounds="True" IsHitTestVisible="False"/>
+
+                    <!-- App icon and title -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0">
+                        <Image Source="Icons/AppIcon.ico" Width="18" Height="18" Margin="0,0,8,0"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <TextBlock Text="Scheduler Pro" FontSize="13" FontWeight="SemiBold" Foreground="White"/>
+                    </StackPanel>
+
+                    <!-- Window control buttons -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+                        <Button Content="—" Style="{StaticResource TitleBarButton}" Click="MinimizeButton_Click"/>
+                        <Button x:Name="MaximizeButton" Content="▢" Style="{StaticResource TitleBarButton}" Click="MaximizeButton_Click"/>
+                        <Button Content="✕" Style="{StaticResource TitleBarCloseButton}" Click="CloseButton_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ==================== MAIN CONTENT ==================== -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="220"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Background="White" Effect="{StaticResource CardShadow}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Margin="20,28,20,32">
+                            <TextBlock Text="📅" FontSize="28" Margin="0,0,0,6"/>
+                            <TextBlock Text="Scheduler Pro" FontSize="18" FontWeight="Bold" Foreground="#111827"/>
+                            <TextBlock Text="Smart scheduling made easy" FontSize="11" Foreground="#6B7280" Margin="0,4,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Margin="12,0">
+                            <Button x:Name="SetupNavButton" Content="⚙️ Setup" Style="{StaticResource ActiveSidebarButton}" Click="Setup_Click"/>
+                            <Button x:Name="ManualScheduleNavButton" Content="👤 Manual Schedule" Style="{StaticResource SidebarButton}" Click="ManualSchedule_Click"/>
+                            <Button x:Name="ImportDataNavButton" Content="📥 Import Data" Style="{StaticResource SidebarButton}" Click="ImportData_Click"/>
+                            <Button x:Name="ViewAvailabilitiesNavButton" Content="📊 View Availabilities" Style="{StaticResource SidebarButton}" Click="ViewAvailabilities_Click"/>
+                            <Button x:Name="ScheduleNavButton" Content="📋 View Schedule" Style="{StaticResource SidebarButton}" Click="Schedule_Click"/>
+                            <Button x:Name="ExportNavButton" Content="📤 Export" Style="{StaticResource SidebarButton}" Click="ExportPage_Click"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2" Margin="20,0,20,28">
+                            <Button x:Name="AboutButton" Content="ℹ️ About" Style="{StaticResource SidebarButton}" Click="AboutButton_Click"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Grid Grid.Column="1" Margin="32,28,32,28">
+                    <Views:SetupPage x:Name="SetupPageControl" Visibility="Visible"/>
+                    <Views:ManualSchedulePage x:Name="ManualSchedulePageControl" Visibility="Collapsed"/>
+                    <Views:ImportDataPage x:Name="ImportDataPageControl" Visibility="Collapsed"/>
+                    <Views:ViewAvailabilitiesPage x:Name="ViewAvailabilitiesPageControl" Visibility="Collapsed"/>
+                    <Views:SchedulePage x:Name="SchedulePageControl" Visibility="Collapsed"/>
+
+                    <Grid x:Name="ExportPage" Visibility="Collapsed">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <ScrollViewer.Resources>
+                                <Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBar}"/>
+                            </ScrollViewer.Resources>
+                            <Views:ExportPage x:Name="ExportPageControl"/>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
+
+                <Grid Grid.ColumnSpan="2" Panel.ZIndex="1000">
+                    <Views:PopupSystem x:Name="PopupSystemControl" />
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

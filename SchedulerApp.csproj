@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net481</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>SchedulerApp</RootNamespace>
+    <AssemblyName>SchedulerApp</AssemblyName>
+    <LangVersion>9.0</LangVersion>
+    <PreferNativeArm64>true</PreferNativeArm64>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Nullable>disable</Nullable>
+    <ApplicationIcon>Icons\AppIcon.ico</ApplicationIcon>
+    <Version>2.0.0.0</Version>
+  </PropertyGroup>
+
+<ItemGroup>
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="OpenXMLOffice.Presentation" Version="2.9.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.1" />
+    <PackageReference Include="System.IO.Compression" Version="4.3.0" />
+    <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
+</ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Icons\AppIcon.ico" />
+    <Resource Include="Icons\Black-White-Template.png" />
+    <Resource Include="Icons\Blue-Doodle-Template.png" />
+    <Resource Include="Icons\Blue-Dots-Template.png" />
+    <Resource Include="Icons\Blue-Watercolor-Template.png" />
+    <Resource Include="Icons\Cream-Dark-Brown-Template.png" />
+    <Resource Include="Icons\Grey-Black-Template.png" />
+    <Resource Include="Icons\Peach-Green-Template.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Templates\*.pptx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\*.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

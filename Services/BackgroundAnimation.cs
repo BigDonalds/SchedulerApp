@@ -25,11 +25,48 @@ namespace SchedulerApp.Services
         private readonly List<UIElement> _staticParticles = new List<UIElement>();
         private Brush _originalCanvasBackground;
         private DateTime _lastShootingStarTime = DateTime.MinValue;
+        private const int MaxSnowflakes = 25;
+        private readonly SolidColorBrush _dotBrush = new SolidColorBrush(Color.FromArgb(180, 255, 255, 255));
+        private readonly SolidColorBrush _crystalFillBrush = new SolidColorBrush(Color.FromArgb(200, 255, 255, 255));
+        private readonly SolidColorBrush _crystalStrokeBrush = new SolidColorBrush(Color.FromArgb(150, 255, 255, 255));
+        private readonly SolidColorBrush _starFillBrush = new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
+        private readonly SolidColorBrush _starStrokeBrush = new SolidColorBrush(Color.FromArgb(200, 255, 255, 255));
+        private readonly SolidColorBrush _nightBackgroundBrush = new SolidColorBrush(Color.FromRgb(2, 2, 8));
+        private readonly SolidColorBrush _glowBrush = new SolidColorBrush(Color.FromArgb(25, 80, 100, 180));
+        private readonly SolidColorBrush _glowTransparentBrush = new SolidColorBrush(Color.FromArgb(0, 80, 100, 180));
+        private readonly SolidColorBrush _shootingStarStartBrush = new SolidColorBrush(Color.FromArgb(0, 255, 255, 255));
+        private readonly SolidColorBrush _shootingStarEndBrush = new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
+        private readonly RadialGradientBrush _glowGradientBrush;
+        private readonly SolidColorBrush _starDotBrush = new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
+        private readonly SolidColorBrush _starDotSmallBrush = new SolidColorBrush(Color.FromArgb(200, 255, 255, 255));
 
         public BackgroundAnimation(Canvas canvas)
         {
             _canvas = canvas;
             _originalCanvasBackground = canvas.Background;
+
+            // Freeze all shared brushes so WPF can reuse them instead of allocating new ones
+            _dotBrush.Freeze();
+            _crystalFillBrush.Freeze();
+            _crystalStrokeBrush.Freeze();
+            _starFillBrush.Freeze();
+            _starStrokeBrush.Freeze();
+            _nightBackgroundBrush.Freeze();
+            _glowBrush.Freeze();
+            _glowTransparentBrush.Freeze();
+            _shootingStarStartBrush.Freeze();
+            _shootingStarEndBrush.Freeze();
+
+            // Build and freeze a single shared radial gradient for the nebula glows
+            _glowGradientBrush = new RadialGradientBrush
+            {
+                GradientStops = new GradientStopCollection
+                {
+                    new GradientStop(Color.FromArgb(40, 120, 150, 220), 0),
+                    new GradientStop(Color.FromArgb(0, 120, 150, 220), 1)
+                }
+            };
+            _glowGradientBrush.Freeze();
         }
 
         /// <summary>
@@ -109,6 +146,12 @@ namespace SchedulerApp.Services
         // ==================== THEME 0: SNOW ====================
         private void SpawnSnowflake(double canvasWidth, double canvasHeight)
         {
+            // Cap the number of active snowflakes to prevent unbounded memory growth
+            if (_activeParticles.Count >= MaxSnowflakes) return;
+
+            // Spawn with ~40% probability per tick to reduce object churn
+            if (_random.Next(0, 100) >= 40) return;
+
             // Larger flakes get a detailed 6-pointed crystal shape,
             // smaller ones stay as soft round dots for depth.
             double size = _random.Next(3, 9);
@@ -127,8 +170,7 @@ namespace SchedulerApp.Services
                 {
                     Width = size,
                     Height = size,
-                    Fill = new SolidColorBrush(Color.FromArgb(
-                        (byte)_random.Next(120, 200), 255, 255, 255)),
+                    Fill = _dotBrush,
                     Opacity = 0
                 };
                 flake = dot;
@@ -151,7 +193,19 @@ namespace SchedulerApp.Services
                 To = canvasHeight + 10,
                 Duration = TimeSpan.FromSeconds(fallDuration)
             };
-            fallAnimation.Completed += (s, args) => RemoveParticle(flake);
+            fallAnimation.Completed += (s, args) =>
+            {
+                // Release all animations before removing so the animation clocks
+                // can be garbage collected immediately
+                flake.BeginAnimation(Canvas.TopProperty, null);
+                flake.BeginAnimation(Canvas.LeftProperty, null);
+                flake.BeginAnimation(UIElement.OpacityProperty, null);
+                if (flake.RenderTransform is RotateTransform rt)
+                {
+                    rt.BeginAnimation(RotateTransform.AngleProperty, null);
+                }
+                RemoveParticle(flake);
+            };
             flake.BeginAnimation(Canvas.TopProperty, fallAnimation);
 
             var swayAnimation = new DoubleAnimation
@@ -221,10 +275,8 @@ namespace SchedulerApp.Services
             return new Polygon
             {
                 Points = points,
-                Fill = new SolidColorBrush(Color.FromArgb(
-                    (byte)_random.Next(150, 220), 255, 255, 255)),
-                Stroke = new SolidColorBrush(Color.FromArgb(
-                    (byte)_random.Next(120, 180), 255, 255, 255)),
+                Fill = _crystalFillBrush,
+                Stroke = _crystalStrokeBrush,
                 StrokeThickness = 0.5
             };
         }
@@ -236,16 +288,17 @@ namespace SchedulerApp.Services
             double canvasHeight = _canvas.ActualHeight;
             if (canvasWidth < 10 || canvasHeight < 10) return;
 
-            // Pitch black background
-            _canvas.Background = new SolidColorBrush(Color.FromRgb(2, 2, 8));
+            // Pitch black background (frozen brush)
+            _canvas.Background = _nightBackgroundBrush;
 
-            // Create a dense field of stars with varying sizes and brightness
-            int starCount = Math.Max(60, (int)(canvasWidth * canvasHeight / 9000));
+            // Dense field of small sharp-edged star polygons
+            int starCount = Math.Max(40, (int)(canvasWidth / 30));
             for (int i = 0; i < starCount; i++)
             {
-                double size = _random.Next(1, 5) * 0.8; // 0.8 to 4.0
-                bool isLarge = _random.Next(0, 100) < 12; // ~12% large stars
-                if (isLarge) size = _random.Next(5, 9);
+                // Very small sharp stars: 1.5 to 3.5 px
+                double size = _random.Next(2, 5) * 0.7;
+                bool isLarger = _random.Next(0, 100) < 8; // ~8% slightly larger
+                if (isLarger) size = _random.Next(4, 6) * 0.7;
 
                 var star = CreateStarShape(size);
 
@@ -258,50 +311,43 @@ namespace SchedulerApp.Services
                 _canvas.Children.Add(star);
                 _staticParticles.Add(star);
 
-                // Some stars shine brighter (twinkle), others stay steady
-                if (_random.Next(0, 100) < 55)
+                // Flicker is rare (~12% of stars) and slow
+                if (_random.Next(0, 100) < 12)
                 {
-                    double baseOpacity = _random.Next(3, 8) / 10.0;
-                    double peakOpacity = Math.Min(1.0, baseOpacity + _random.Next(2, 5) / 10.0);
+                    double baseOpacity = _random.Next(4, 8) / 10.0;
+                    double peakOpacity = Math.Min(1.0, baseOpacity + _random.Next(2, 3) / 10.0);
                     star.Opacity = baseOpacity;
 
                     var twinkle = new DoubleAnimation
                     {
                         From = baseOpacity,
                         To = peakOpacity,
-                        Duration = TimeSpan.FromMilliseconds(_random.Next(250, 800)),
+                        Duration = TimeSpan.FromMilliseconds(_random.Next(1200, 2500)),
                         AutoReverse = true,
-                        RepeatBehavior = RepeatBehavior.Forever
+                        RepeatBehavior = new RepeatBehavior(2)
                     };
                     star.BeginAnimation(UIElement.OpacityProperty, twinkle);
                 }
                 else
                 {
-                    star.Opacity = _random.Next(4, 9) / 10.0;
+                    star.Opacity = _random.Next(5, 9) / 10.0;
                 }
             }
 
-            // Add a subtle nebula glow in a few spots
-            for (int i = 0; i < 3; i++)
+            // Add a subtle nebula glow using the shared frozen gradient brush
+            for (int i = 0; i < 2; i++)
             {
-                double glowSize = _random.Next(150, 300);
+                double glowSize = _random.Next(120, 200);
                 var glow = new Ellipse
                 {
                     Width = glowSize,
                     Height = glowSize,
-                    Fill = new RadialGradientBrush
-                    {
-                        GradientStops = new GradientStopCollection
-                        {
-                            new GradientStop(Color.FromArgb(25, 80, 100, 180), 0),
-                            new GradientStop(Color.FromArgb(0, 80, 100, 180), 1)
-                        }
-                    },
-                    Opacity = 0.6
+                    Fill = _glowGradientBrush,
+                    Opacity = 0.5
                 };
 
-                Canvas.SetLeft(glow, _random.Next(-100, (int)canvasWidth));
-                Canvas.SetTop(glow, _random.Next(-100, (int)canvasHeight));
+                Canvas.SetLeft(glow, _random.Next(-80, (int)canvasWidth));
+                Canvas.SetTop(glow, _random.Next(-60, (int)canvasHeight));
                 Canvas.SetZIndex(glow, 5);
                 _canvas.Children.Add(glow);
                 _staticParticles.Add(glow);
@@ -309,7 +355,7 @@ namespace SchedulerApp.Services
         }
 
         /// <summary>
-        /// Creates a 4-pointed sparkle star shape using a polygon.
+        /// Creates a small 4-pointed sparkle star shape using a polygon.
         /// </summary>
         private Polygon CreateStarShape(double size)
         {
@@ -332,14 +378,13 @@ namespace SchedulerApp.Services
                 points[i] = new Point(points[i].X * size, points[i].Y * size);
             }
 
-            // Warm white with slight blue tint for realism
-            byte warmth = (byte)_random.Next(220, 256);
+            // White sharp star with frozen brushes
             var star = new Polygon
             {
                 Points = points,
-                Fill = new SolidColorBrush(Color.FromArgb(255, warmth, warmth, 255)),
-                Stroke = new SolidColorBrush(Color.FromArgb(200, warmth, warmth, 255)),
-                StrokeThickness = 0.5
+                Fill = _starFillBrush,
+                Stroke = _starStrokeBrush,
+                StrokeThickness = 0.3
             };
 
             return star;
@@ -377,8 +422,8 @@ namespace SchedulerApp.Services
                     EndPoint = new Point(1, 0),
                     GradientStops = new GradientStopCollection
                     {
-                        new GradientStop(Color.FromArgb(0, 255, 255, 255), 0),
-                        new GradientStop(Color.FromArgb(255, 255, 255, 255), 1)
+                        new GradientStop(_shootingStarStartBrush.Color, 0),
+                        new GradientStop(_shootingStarEndBrush.Color, 1)
                     }
                 },
                 StrokeThickness = 1,
@@ -409,6 +454,10 @@ namespace SchedulerApp.Services
             };
             moveTrail.Completed += (s, args) =>
             {
+                // Release animations before removing to free animation clocks
+                trail.BeginAnimation(Canvas.LeftProperty, null);
+                trail.BeginAnimation(Canvas.TopProperty, null);
+                trail.BeginAnimation(UIElement.OpacityProperty, null);
                 RemoveParticle(trail);
             };
             trail.BeginAnimation(Canvas.LeftProperty, moveTrail);

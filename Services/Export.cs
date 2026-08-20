@@ -1,4 +1,4 @@
-﻿using OpenXMLOffice.Presentation_2007;
+using OpenXMLOffice.Presentation_2007;
 using OpenXMLOffice.Global_2007;
 using System;
 using System.Collections.Generic;
@@ -754,7 +754,19 @@ namespace SchedulerApp.Services
                     continue;
                 }
 
-                string dayLabel = $"{currentDate:ddd}\n{currentDate:MM/dd}";
+                // Use custom day header label if one was set by the user
+                int actualDayIndex = GetDayIndex(schedule, currentDate);
+                string dayHeaderCellId = $"dayheader_{actualDayIndex}";
+                string dayLabel;
+                if (schedule.CellAssignments.ContainsKey(dayHeaderCellId) &&
+                    schedule.CellAssignments[dayHeaderCellId].Count > 0)
+                {
+                    dayLabel = string.Join("\n", schedule.CellAssignments[dayHeaderCellId]);
+                }
+                else
+                {
+                    dayLabel = $"{currentDate:ddd}\n{currentDate:MM/dd}";
+                }
 
                 var dayHeaderCell = new TableCell();
                 dayHeaderCell.textValue = dayLabel;
@@ -781,7 +793,18 @@ namespace SchedulerApp.Services
                 double startTime = schedule.OpeningHour + (interval * schedule.ShiftLengthHours);
                 double endTime = Math.Min(startTime + schedule.ShiftLengthHours, schedule.ClosingHour);
 
-                string timeLabel = $"{FormatTimeFromHour(startTime)}\nto\n{FormatTimeFromHour(endTime)}";
+                // Use a custom time header label if one was set by the user
+                string timeHeaderCellId = $"timeheader_{interval}";
+                string timeLabel;
+                if (schedule.CellAssignments.ContainsKey(timeHeaderCellId) &&
+                    schedule.CellAssignments[timeHeaderCellId].Count > 0)
+                {
+                    timeLabel = string.Join("\n", schedule.CellAssignments[timeHeaderCellId]);
+                }
+                else
+                {
+                    timeLabel = $"{FormatTimeFromHour(startTime)}\nto\n{FormatTimeFromHour(endTime)}";
+                }
 
                 var timeRow = new TableRow
                 {
@@ -1097,9 +1120,22 @@ namespace SchedulerApp.Services
                                 new System.Windows.Rect(x, y, cellWidth, cellHeight));
                         }
 
-                        var dayLabel = $"{currentDate:ddd}\n{currentDate:MM/dd}";
+                        // Use a custom day header label if one was set by the user
+                        int actualDayIndex = GetDayIndex(schedule, currentDate);
+                        string dayHeaderCellId = $"dayheader_{actualDayIndex}";
+                        string dayLabelText;
+                        if (schedule.CellAssignments.ContainsKey(dayHeaderCellId) &&
+                            schedule.CellAssignments[dayHeaderCellId].Count > 0)
+                        {
+                            dayLabelText = string.Join("\n", schedule.CellAssignments[dayHeaderCellId]);
+                        }
+                        else
+                        {
+                            dayLabelText = $"{currentDate:ddd}\n{currentDate:MM/dd}";
+                        }
+
                         var dayText = new FormattedText(
-                            dayLabel,
+                            dayLabelText,
                             System.Globalization.CultureInfo.CurrentCulture,
                             System.Windows.FlowDirection.LeftToRight,
                             new Typeface("Arial"),
@@ -1131,9 +1167,21 @@ namespace SchedulerApp.Services
                                 new System.Windows.Rect(x, y, cellWidth, cellHeight));
                         }
 
-                        var timeLabel = $"{FormatTimeFromHour(startTime)}";
+                        // Use a custom time header label if one was set by the user
+                        string timeHeaderCellId = $"timeheader_{interval}";
+                        string timeLabelTextValue;
+                        if (schedule.CellAssignments.ContainsKey(timeHeaderCellId) &&
+                            schedule.CellAssignments[timeHeaderCellId].Count > 0)
+                        {
+                            timeLabelTextValue = string.Join("\n", schedule.CellAssignments[timeHeaderCellId]);
+                        }
+                        else
+                        {
+                            timeLabelTextValue = $"{FormatTimeFromHour(startTime)}";
+                        }
+
                         var timeLabelText = new FormattedText(
-                            timeLabel,
+                            timeLabelTextValue,
                             System.Globalization.CultureInfo.CurrentCulture,
                             System.Windows.FlowDirection.LeftToRight,
                             new Typeface("Arial"),
